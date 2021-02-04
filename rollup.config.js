@@ -1,116 +1,66 @@
-import { resolve } from 'path';
-import typescript from 'rollup-plugin-typescript2';
-import vue from 'rollup-plugin-vue';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import cjs from '@rollup/plugin-commonjs';
-import replace from '@rollup/plugin-replace';
-import json from '@rollup/plugin-json';
-import { config } from 'dotenv';
-config();
+import path from 'path'
+import esbuild from 'rollup-plugin-esbuild'
+import nodeResolve from '@rollup/plugin-node-resolve'
+const { targets: allTargets, packagesDir } = require('./scripts/utils')
 
-const packagesDir = resolve(__dirname, 'packages');
-const targets = process.env.TARGETS.split(' ');
-const isDev = process.env.NODE_ENV === 'development';
-const shouldEmitDeclaration = process.env.TYPES != null;
+const plugins = [nodeResolve({ preferBuiltins: true }), esbuild()]
 
-const plugins = [
-  nodeResolve({
-    preferBuiltins: true,
-    browser: true,
-  }),
-  typescript({
-    check: !isDev,
-    cacheRoot: resolve(__dirname, 'node_modules/.rts2_cache'),
-    tsconfig: resolve(__dirname, 'tsconfig.json'),
-    tsconfigOverride: {
-      compilerOptions: {
-        sourceMap: true,
-        declaration: shouldEmitDeclaration,
-        declarationMap: shouldEmitDeclaration,
-      },
-      exclude: ['tests', '**/__tests__'],
-    },
-  }),
-  vue(),
-  cjs(),
-  json(),
-];
+const packageConfigs = process.env.ROLLUP_WATCH
+  ? createDevConfig()
+  : createProdConfig()
 
-const external = ['vue', 'vue-template-compiler', '@vue/composition-api'];
+function createProdConfig() {
+  const packageDir = path.resolve(packagesDir, process.env.TARGET)
+  const resolve = (p) => path.resolve(packageDir, p)
+  const pkg = require(resolve('package.json'))
+  const name = path.basename(packageDir)
+  const banner = `/*!
+  * ${pkg.name} v${pkg.version}
+  * (c) ${new Date().getFullYear()} Marvin Rudolph
+  * @license MIT
+  */`
 
-const configs = targets.map((target) => createConfig(target));
-
-if (isDev) {
-  plugins.push(getReplacementPlugin());
-  configs.push(createFixturesConfig());
-}
-
-function createConfig(target) {
-  const packageDir = resolve(packagesDir, target);
-  const packageResolve = (p) => resolve(packageDir, p);
-  const pkg = require(packageResolve('package.json'));
-
-  const output = [
-    {
-      file: packageResolve(pkg.module),
-      format: 'es',
-      sourcemap: !isDev,
-    },
-  ];
-
-  external.push(
+  const formats = ['cjs', 'esm']
+  const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
-  );
+  ]
 
-  if (!isDev) {
-    const globals = {
-      vue: 'Vue',
-      '@vue/composition-api': 'vueCompositionApi',
-      '@marvr/storyblok-rich-text-types': 'storyblokRichTextTypes',
-    };
-
-    output.push({
-      exports: 'named',
-      name: pkg.buildOptions.name,
-      sourcemap: true,
-      file: packageResolve(pkg.main),
-      format: 'umd',
-      globals,
-    });
-  }
-
-  return {
-    input: packageResolve('src/index.ts'),
-    output,
-    plugins,
-    external,
-  };
-}
-
-function createFixturesConfig() {
-  const fixturesFolder = resolve(__dirname, 'tests/fixtures');
-
-  return {
-    input: resolve(fixturesFolder, 'src/index.ts'),
+  return formats.map((format) => ({
+    input: resolve('src/index.ts'),
     output: {
-      file: resolve(fixturesFolder, 'dist/main.esm.js'),
-      format: 'es',
+      file: resolve(`dist/${name}.${format}.js`),
+      format,
+      banner,
     },
+    external,
     plugins,
-    onwarn: (msg, warn) => {
-      if (!/Circular/.test(msg)) {
-        warn(msg);
-      }
-    },
-  };
+  }))
 }
 
-function getReplacementPlugin() {
-  return replace({
-    'process.env.NODE_ENV': `"development"`,
-    'process.env.STORYBLOK_TOKEN': `'${process.env.STORYBLOK_TOKEN}'`,
-  });
+function createDevConfig() {
+  const configs = allTargets.map((target) => {
+    const packageDir = path.resolve(packagesDir, target)
+    const resolve = (p) => path.resolve(packageDir, p)
+    const pkg = require(resolve('package.json'))
+    const format = 'cjs'
+    const external = [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ]
+
+    return {
+      input: resolve('src/index.ts'),
+      output: {
+        file: resolve(`dist/${target}.${format}.js`),
+        format,
+      },
+      plugins,
+      external,
+    }
+  })
+
+  return configs
 }
 
-export default configs;
+export default packageConfigs

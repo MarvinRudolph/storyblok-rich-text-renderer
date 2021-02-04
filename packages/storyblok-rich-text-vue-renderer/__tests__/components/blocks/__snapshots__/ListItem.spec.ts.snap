@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ListItem.vue renders template with default slot 1`] = `"<li>List Item</li>"`;

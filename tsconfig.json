@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
     "sourceMap": false,
     "target": "es2019",
     "module": "esnext",
@@ -7,32 +9,17 @@
     "allowJs": false,
     "strict": true,
     "noUnusedLocals": true,
-    "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "removeComments": false,
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "types": [
-      "jest",
-      "node"
-    ],
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "lib": ["esnext"],
+    "types": ["node", "jest"],
     "rootDir": ".",
-    "baseUrl": ".",
+    "isolatedModules": true,
     "paths": {
       "@marvr/*": ["packages/*/src"]
     }
   },
-  "files": [
-    "plugin.d.ts",
-    "shims-vue.d.ts",
-    "shims-tsx.d.ts"
-  ],
-  "include": [
-    "packages/*/src",
-    "packages/*/__tests__",
-    "tests"
-  ]
+  "include": ["packages/*/src", "packages/*/__tests__"]
 }

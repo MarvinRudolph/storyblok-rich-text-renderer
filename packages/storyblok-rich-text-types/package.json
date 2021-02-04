@@ -1,33 +1,18 @@
 {
-  "name": "@marvr/storyblok-rich-text-types",
-  "version": "2.0.1",
-  "description": "Type definitions for Storyblok's rich-text",
-  "keywords": [
-    "rich-text",
-    "renderer",
-    "storyblok",
-    "types",
-    "typescript",
-    "declaration"
-  ],
-  "homepage": "https://storyblok-rich-text-renderer.netlify.com/",
-  "bugs": {
-    "url": "https://github.com/MarvinRudolph/storyblok-rich-text-renderer/issues"
+  "name": "@marvr/storyblok-rich-text-vue-renderer",
+  "version": "0.0.0",
+  "description": "@marvr/storyblok-rich-text-vue-renderer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarvinRudolph/storyblok-rich-text-renderer.git",
+    "directory": "packages/storyblok-rich-text-vue-renderer"
   },
   "license": "MIT",
-  "author": {
-    "name": "Marvin Rudolph",
-    "email": "info@marvin-rudolph.de"
-  },
-  "sideEffects": false,
-  "main": "dist/storyblok-rich-text-types.umd.js",
-  "unpkg": "dist/storyblok-rich-text-types.min.js",
-  "module": "dist/storyblok-rich-text-types.esm.js",
-  "types": "dist/storyblok-rich-text-types.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
-  "buildOptions": {
-    "name": "StoryblokRichTextTypes"
-  }
+  "author": "Marvin Rudolph",
+  "main": "dist/storyblok-rich-text-vue-renderer.cjs.js",
+  "module": "dist/storyblok-rich-text-vue-renderer.esm.js",
+  "types": "dist/storyblok-rich-text-vue-renderer.d.ts",
+  "files": [
+    "dist"
+  ]
 }

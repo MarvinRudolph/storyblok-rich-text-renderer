@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Heading.vue renders tag with passed level prop 1`] = `"<h1>Headline 1</h1>"`;

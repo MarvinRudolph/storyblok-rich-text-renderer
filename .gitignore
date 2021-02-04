@@ -1,8 +1,6 @@
-dist
 .DS_Store
 node_modules
-coverage
-temp
-TODOs.md
+dist
 *.log
-.env
+temp
+coverage

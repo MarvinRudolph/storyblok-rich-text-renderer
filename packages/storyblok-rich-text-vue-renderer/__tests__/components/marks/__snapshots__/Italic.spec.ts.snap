@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Italic.vue renders template with default slot 1`] = `"<i>Italic</i>"`;

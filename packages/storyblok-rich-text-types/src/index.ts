@@ -1,2 +1,1 @@
-export * from './enum';
-export * from './nodes';
+export const teste = 123
